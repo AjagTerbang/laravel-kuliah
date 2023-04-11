@@ -24,9 +24,11 @@ use App\Http\Controllers\UserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/recipes', [RecipeController::class, 'show_recipe']);
+Route::get('/recipes', [RecipeController::class, 'show_recipes']);
 Route::post('/recipes/get-recipe', [RecipeController::class, 'get_recipe_by_id']);
 Route::post('/recipes/rating', [RecipeController::class, 'rating']);
+
+
 Route::get('/author', function() {
     return response()->json([
         "nama" => "Haikal Fasiha Fayyadh",
@@ -44,7 +46,7 @@ Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/publish/{id}', [AdminController::class, 'publish_recipe']);
     Route::get('/unpublish/{id}', [AdminController::class, 'unpublish_recipe']);
 
-    Route::get('/show-recipes', [AdminController::class, 'show_recipes_all']);
+    Route::get('/show-recipes', [AdminController::class, 'show_recipes']);
     Route::get('/show-recipes/{id}', [AdminController::class, 'show_recipes_by_id']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/register', [AdminController::class, 'show_register']);

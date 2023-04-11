@@ -52,34 +52,22 @@ class AdminController extends Controller
             "data" => $users
         ], 200);
     }
-    public function show_recipes_all()
+    public function show_recipes()
     {
-        # code...
-        $recipe = Recipe::all();
-        return response()->json([
-            "msg" => "Daftar Resep",
-            "data" => $recipe
-        ]);
-    }
-     public function show_recipes()
-    {
-        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
-        var_dump($recipes);
+        $recipes = Recipe::all();
+
         $data = [];
-        foreach ($recipes as $r) {
-            $data[] = [
-                'idresep' => $r->idresep,
-                'judul' => $r->judul,
-                'gambar' => url($r->gambar),
-                'nama' => $r->user->name,
-            ];
+        foreach ($recipes as $recipe) {
+            $recipe['gambar'] = url('uploads/' . $recipe['gambar']);
+            $data[] = $recipe;
         }
-        
         return response()->json([
-            'status' => 'success',
-            'data' => $data
-        ]);
+            "msg" => "Recipe List",
+            "data" => $recipes
+        ], 200);
+
     }
+     
     public function show_recipe(){
         $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
         $data = [];
@@ -260,7 +248,7 @@ class AdminController extends Controller
 
         foreach (json_decode($request->alat) as $alat) {
             Tool::create([
-                'nama_alat' => $alat->nama_alat,
+                'nama_alat' => $alat->nama,
                 'keterangan' => $alat->keterangan,
                 'resep_idresep' => $recipe->id
             ]);

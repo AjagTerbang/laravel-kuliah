@@ -44,6 +44,23 @@ class RecipeController extends Controller
             ]
         ]);
     }
+
+    public function show_recipes()
+    {
+        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
+
+        $data = [];
+        foreach ($recipes as $r) {
+            $data[] = [
+                'idresep' => $r->idresep,
+                'judul' => $r->judul,
+                'gambar' => url('uploads/' . $r->gambar),
+                'nama' => $r->user->nama,
+            ];
+        }
+
+        return response()->json($data, 200);
+    }
     public function rating(Request $request)
     {
         $v = Validator::make($request->all(), [
