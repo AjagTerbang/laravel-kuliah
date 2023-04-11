@@ -16,33 +16,61 @@ class RecipeController extends Controller
    
     public function get_recipe_by_id(Request $request)
     {
+        $recipe = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep);
+        if (!$recipe->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Resep tidak ditemukan'
+            ], 404);
+        }
+
         $validator = Validator::make($request->all(), [
             'idresep' => 'required',
-            'email' => 'required'
         ]);
 
         if ($validator->fails()) {
             return MessageError::message($validator->errors()->messages());
         }
 
-        $recipe = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep)->get();
+        $id = $request->idresep;
+        $recipe = Recipe::where('idresep', $id)->first();
+        if (!$recipe) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Resep tidak ditemukan'
+            ], 404);
+        }
+
+        $recipes = Recipe::where('status_resep', 'publish')->where('idresep', $request->idresep)->get();
         $tools = Tool::where('resep_idresep', $request->idresep)->get();
         $ingredients = Ingredients::where('resep_idresep', $request->idresep)->get();
 
+
+        $data = [];
+        foreach ($recipes as $recipe) {
+            $data[] = [
+                'idresep' => $recipe->idresep,
+                'judul' => $recipe->judul,
+                'gambar' => url('uploads/' . $recipe->gambar),
+                'cara_pembuatan' => $recipe->cara_pembuatan,
+                'video' => $recipe->video,
+                'nama' => $recipe->user->nama,
+            ];
+        }
+
         RecipeView::create([
-            'email' => $request->email,
-            'date' => date('Y-m-d'),
+            'email' => $request->email ?? 'guest',
+            'date' => now(),
             'resep_idresep' => $request->idresep
         ]);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'recipe' => $recipe,
-                'tools' => $tools,
-                'ingredients' => $ingredients
-            ]
-        ]);
+        $recipeData = [
+            'recipe' => $data,
+            'tools' => $tools,
+            'ingredients' => $ingredients
+        ];
+
+        return response()->json($recipeData, 200);
     }
 
     public function show_recipes()
