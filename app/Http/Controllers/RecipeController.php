@@ -13,40 +13,7 @@ use Helper\MessageError;
 
 class RecipeController extends Controller
 {
-    public function show_recipes()
-    {
-        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
-        var_dump($recipes);
-        $data = [];
-        foreach ($recipes as $r) {
-            $data[] = [
-                'idresep' => $r->idresep,
-                'judul' => $r->judul,
-                'gambar' => url($r->gambar),
-                'nama' => $r->user->name,
-            ];
-        }
-        
-        return response()->json([
-            'status' => 'success',
-            'data' => $data
-        ]);
-    }
-    public function show_recipe(){
-        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
-        $data = [];
-        
-        foreach($recipes as $recipe){
-            array_push($data, [
-                'idresep'=>$recipe->idresep,
-                'judul'=>$recipe->judul,
-                'gambar'=>url($recipe->gambar),
-                'nama'=>$recipe->user->name
-            ]);
-        }
-        return response()->json($data,200);
-    }
-
+   
     public function get_recipe_by_id(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -77,7 +44,6 @@ class RecipeController extends Controller
             ]
         ]);
     }
-
     public function rating(Request $request)
     {
         $v = Validator::make($request->all(), [

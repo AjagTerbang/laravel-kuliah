@@ -52,6 +52,51 @@ class AdminController extends Controller
             "data" => $users
         ], 200);
     }
+    public function show_recipes_all()
+    {
+        # code...
+        $recipe = Recipe::all();
+        return response()->json([
+            "msg" => "Daftar Resep",
+            "data" => $recipe
+        ]);
+    }
+     public function show_recipes()
+    {
+        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
+        var_dump($recipes);
+        $data = [];
+        foreach ($recipes as $r) {
+            $data[] = [
+                'idresep' => $r->idresep,
+                'judul' => $r->judul,
+                'gambar' => url($r->gambar),
+                'nama' => $r->user->name,
+            ];
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    }
+    public function show_recipe(){
+        $recipes = Recipe::with('user')->where('status_resep', 'publish')->get();
+        $data = [];
+        
+        foreach($recipes as $recipe){
+            array_push($data, [
+                'idresep'=>$recipe->idresep,
+                'judul'=>$recipe->judul,
+                'gambar'=>url($recipe->gambar),
+                'nama'=>$recipe->user->name
+            ]);
+        }
+        return response()->json($data,200);
+    }
+
+    
+
 
     public function show_register_by_id($id)
     {
@@ -93,6 +138,22 @@ class AdminController extends Controller
                 "msg" => "UserID: $id berhasil diupdate",
                 "data" => $data
             ], 200);
+        }
+    }
+    public function show_recipes_by_id($id)
+    {
+        $recipes = Recipe::where('idresep', $id)->first();
+
+        if ($recipes) {
+            return response()->json([
+                "msg" => "ResepId: ".$id,
+                "data" => $recipes
+            ]);
+        }else {
+            return response()->json([
+                "msg" => "Recipe List",
+                "data" => "Resep tidak ditemukan"
+            ]);
         }
     }
 

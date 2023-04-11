@@ -27,6 +27,13 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/recipes', [RecipeController::class, 'show_recipe']);
 Route::post('/recipes/get-recipe', [RecipeController::class, 'get_recipe_by_id']);
 Route::post('/recipes/rating', [RecipeController::class, 'rating']);
+Route::get('/author', function() {
+    return response()->json([
+        "nama" => "Haikal Fasiha Fayyadh",
+        "nim" => "21416255201203",
+        "kelas" => "IF21B"
+    ]);
+});
 
 Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard']);
@@ -37,6 +44,8 @@ Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/publish/{id}', [AdminController::class, 'publish_recipe']);
     Route::get('/unpublish/{id}', [AdminController::class, 'unpublish_recipe']);
 
+    Route::get('/show-recipes', [AdminController::class, 'show_recipes_all']);
+    Route::get('/show-recipes/{id}', [AdminController::class, 'show_recipes_by_id']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/register', [AdminController::class, 'show_register']);
     Route::get('/register/{id}', [AdminController::class, 'show_register_by_id']);
