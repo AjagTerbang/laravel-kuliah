@@ -57,5 +57,5 @@ Route::middleware(['admin.api'])->prefix('admin')->group(function () {
     Route::get('/deactivation-account/{id}', [AdminController::class, 'deactivation_account']);
 });
 Route::middleware(['user.api'])->prefix('user')->group(function(){
-    Route::post('submit-recipe', [UserController::class, 'create_recipe']);
+    Route::post('/submit-recipe', [UserController::class, 'create_recipe']);
 });

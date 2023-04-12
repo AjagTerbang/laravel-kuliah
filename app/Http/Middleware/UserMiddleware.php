@@ -24,7 +24,7 @@ class UserMiddleware
             $jwt = $request->bearerToken();
 
             $decoded = JWT::decode($jwt, new Key(env('JWT_SECRET_KEY'), 'HS256'));
-            if ($decoded->role == 'admin')
+            if ($decoded->role == 'user')
                 return $next($request);
             else
                 return response()->json('Unauthorized', 401);

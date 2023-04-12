@@ -271,11 +271,21 @@ class AdminController extends Controller
             'user_email' => 'required',
             'bahan' => 'required',
             'alat' => 'required',
-            '_method' => 'required|in:PUT'
+            '__method' => 'required|in:PUT'
         ]);
 
         if ($validator->fails()) {
             return MessageError::message($validator->errors()->messages());
+        }
+
+        // custom key
+        $recipe = Recipe::where('idresep', $id);
+        if (!$recipe->first()) {
+            return response()->json([
+                "data" => [
+                    "msg" => "Resep tidak ditemukan",
+                ]
+            ], 404);
         }
 
         $thumb = $request->file('gambar');
@@ -284,9 +294,9 @@ class AdminController extends Controller
 
         $data = $validator->validated();
 
-        Recipe::where('idresep', $id)->update([
+        $recipe->update([
             'judul' => $data['judul'],
-            'gambar' => 'uploads/' . $filename,
+            'gambar' => $filename,
             'cara_pembuatan' => $data['cara_pembuatan'],
             'video' => $data['video'],
             'user_email' => $data['user_email'],
@@ -308,14 +318,14 @@ class AdminController extends Controller
 
         foreach (json_decode($request->alat) as $alat) {
             Tool::create([
-                'nama_alat' => $alat->nama,
+                'nama_alat' => $alat->nama_alat,
                 'keterangan' => $alat->keterangan,
                 'resep_idresep' => $id
             ]);
         }
 
+        $data['msg'] = "Resep berhasil diupdate";
         return response()->json([
-            "msg" => "Resep berhasil diupdate",
             "data" => $data
         ], 200);
     }
